@@ -51,13 +51,33 @@ class App extends React.Component{
     this.state.task = val;
   }
 
+  del(from,data){
+    for(var i=0;i<this.state[from].length;i++){
+      if(this.state[from][i] == data){
+        delete this.state[from][i];
+      }
+    }
+  }
+
   onDrop(type,data){
     console.log(type);
     console.log(data);
     let temp = this.state[type];
-    temp.push(data)
+    let tempData;
+    if(data.done!=""){
+      tempData = data.done;
+      this.del('done',data.done);
+    }
+    if(data.doing!=""){
+      tempData = data.doing;
+      this.del('doing',data.doing);
+    }
+    if(data.todo!=""){
+      tempData = data.todo;
+      this.del('todo',data.todo);
+    }
+    temp.unshift(tempData);
     this.state[type]=temp;
-    this.state
     this.forceUpdate();
   }
 
@@ -76,34 +96,34 @@ class App extends React.Component{
       </Grid>
         <Grid>
           <Cell col={4}>
+          <Droppable types={['done','doing','todo']} onDrop={this.onDrop.bind(this,'todo')}>
             <h3 style={{textAlign:"center"}}>
               Todo
             </h3>
             <div>
-            <Droppable types={['done','doing','todo']} onDrop={this.onDrop.bind(this,'todo')}>
               {this.renderTodos('todo')}
-            </Droppable>
             </div>
+            </Droppable>
           </Cell>
           <Cell col={4}>
+          <Droppable types={['todo','done','doing']} onDrop={this.onDrop.bind(this,'doing')}>
           <h3 style={{textAlign:"center"}}>
             Doing
           </h3>
           <div>
-          <Droppable types={['todo','done','doing']} onDrop={this.onDrop.bind(this,'doing')}>
             {this.renderTodos('doing')}
-          </Droppable>
           </div>
+          </Droppable>
           </Cell>
           <Cell col={4}>
+          <Droppable types={['todo','doing','done']} onDrop={this.onDrop.bind(this,'done')}>
           <h3 style={{textAlign:"center"}}>
             Done
           </h3>
           <div>
-          <Droppable types={['todo','doing','done']} onDrop={this.onDrop.bind(this,'done')}>
             {this.renderTodos('done')}
-          </Droppable>
           </div>
+          </Droppable>
           </Cell>
         </Grid>
       </div>
